@@ -1,4 +1,5 @@
 import os
+from itertools import cycle
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,7 +29,7 @@ def plot_cp(cases, title, filename):
     fig, ax = plt.subplots(figsize=(7, 4.5))
     colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
-    for (path, label), color in zip(cases, colors):
+    for (path, label), color in zip(cases, cycle(colors)):
         xu, cpu, xl, cpl = read_cp(path)
         ax.plot(xu, cpu, color=color, linestyle="-", label=f"{label}, upper")
         ax.plot(xl, cpl, color=color, linestyle="--", label=f"{label}, lower")
@@ -43,15 +44,27 @@ def plot_cp(cases, title, filename):
     ax.legend(fontsize=9, ncol=2)
     fig.tight_layout()
 
-    for ext in ("pdf", "png"):
-        fig.savefig(os.path.join(FIG_DIR, f"{filename}.{ext}"), dpi=300)
+    fig.savefig(os.path.join(FIG_DIR, f"{filename}.png"), dpi=300)
     plt.show()
 
 
-if __name__ == "__main__":
-    # 3.1.2 - inviscid Cp of NACA 1611 at 0, 5 and 10 deg
-    cases_312 = [
-        (os.path.join(INV_DIR, f"cp_1611_a{a}_inv.txt"), rf"$\alpha$ = {a}°")
-        for a in (0, 5, 10)
+def make_cases(filenames):
+    """Build plot cases from filenames in the inviscid data directory."""
+    return [
+        (os.path.join(INV_DIR, name), os.path.splitext(name)[0])
+        for name in filenames
     ]
-    plot_cp(cases_312, "NACA 1611, inviscid", "cp_1611_inviscid_a0_5_10")
+
+
+if __name__ == "__main__":
+    # Add or remove filenames here to choose which cases are plotted together.
+    files_to_plot = [
+        "cp_1622_a10_inv.txt",
+        "cp_1611_a10_inv.txt"
+    ]
+
+    plot_cp(
+        make_cases(files_to_plot),
+        "Inviscid pressure coefficient",
+        "cp_inviscid_comparison",
+    )
