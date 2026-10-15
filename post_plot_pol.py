@@ -43,14 +43,14 @@ def plot_cl_cm(cases, title, filename):
     fig.suptitle(title)
     fig.tight_layout()
 
-    for ext in ("png"):
-        fig.savefig(os.path.join(FIG_DIR, f"{filename}.{ext}"), dpi=300)
+    
+    fig.savefig(os.path.join(FIG_DIR, f"{filename}.png"), dpi=300)
 
 
 if __name__ == "__main__":
     cases = [
         (os.path.join(INV_DIR, "pol_1611_inv.txt"), "NACA 1611"),
-        (os.path.join(INV_DIR, "pol_1622_inv.txt"), "NACA 1622"),
+        (os.path.join(INV_DIR, "pol_0011_inv.txt"), "NACA 0011"),
     ]
-    plot_cl_cm(cases, "Inviscid polars", "polar_inviscid_1611_1622")
+    plot_cl_cm(cases, "Inviscid polars", "polar_inviscid_1611_0011")
     plt.show()
