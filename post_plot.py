@@ -59,9 +59,8 @@ def make_cases(filenames):
 if __name__ == "__main__":
     # Add or remove filenames here to choose which cases are plotted together.
     files_to_plot = [
-        "cp_1611_a10_inv.txt",
-        "cp_1611_a5_inv.txt",
-        "cp_1611_a0_inv.txt",
+        "cp_1622_a10_inv.txt",
+        "cp_1611_a10_inv.txt"
     ]
 
     plot_cp(
