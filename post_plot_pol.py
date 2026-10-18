@@ -49,8 +49,9 @@ def plot_cl_cm(cases, title, filename):
 
 if __name__ == "__main__":
     cases = [
-        (os.path.join(INV_DIR, "pol_1611_inv.txt"), "NACA 1611"),
-        (os.path.join(INV_DIR, "pol_0011_inv.txt"), "NACA 0011"),
+        (os.path.join(INV_DIR, "pol_1611_N10_inv.txt"), "N = 10"),
+        (os.path.join(INV_DIR, "pol_1611_N50_inv.txt"), "N = 50"),
+        (os.path.join(INV_DIR, "pol_1611_N250_inv.txt"), "N = 250"),
     ]
-    plot_cl_cm(cases, "Inviscid polars", "polar_inviscid_1611_0011")
+    plot_cl_cm(cases, "Inviscid polars", "polar_inviscid_N")
     plt.show()
