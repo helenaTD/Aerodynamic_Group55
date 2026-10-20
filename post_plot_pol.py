@@ -1,57 +1,45 @@
-import os
-
 import matplotlib.pyplot as plt
 import numpy as np
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-INV_DIR = os.path.join(BASE_DIR, "Inviscid_flows")
-FIG_DIR = os.path.join(BASE_DIR, "figures")
-os.makedirs(FIG_DIR, exist_ok=True)
+import os
 
 
-def read_polar(path):
-    """Read an XFOIL polar file (PACC). Data starts after the '-----' line.
-    Sorted by alpha, duplicate alphas removed (e.g. two sweeps from 0 deg)."""
-    with open(path) as f:
-        lines = f.readlines()
-    start = next(i for i, line in enumerate(lines) if line.strip().startswith("---")) + 1
-    data = np.loadtxt(lines[start:])
-    data = data[np.argsort(data[:, 0])]
-    _, keep = np.unique(data[:, 0], return_index=True)
-    data = data[keep]
-    names = ["alpha", "CL", "CD", "CDp", "CM", "Top_Xtr", "Bot_Xtr"]
-    return {name: data[:, i] for i, name in enumerate(names)}
+#inputs = ["pol_1611_inv.txt", "pol_1622_inv.txt"]
+#inputs = ["pol_1611_N10_inv.txt", "pol_1611_N50_inv.txt", "pol_1611_N250_inv.txt"]
+inputs = ["pol_1611_inv.txt", "pol_0011_inv.txt"]
 
+#labels_to_use = ["NACA1611", "NACA1622"]
+#labels_to_use = ["N = 10", "N = 50", "N = 250"]
+labels_to_use = ["NACA1611", "NACA0011"]
 
-def plot_cl_cm(cases, title, filename):
-    """Cl-alpha and Cm-alpha side by side. cases: list of (file path, label)."""
-    fig, (ax_cl, ax_cm) = plt.subplots(1, 2, figsize=(10, 4.2))
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Inviscid_flows")
+figures_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
+os.makedirs(figures_dir, exist_ok=True)
 
-    for path, label in cases:
-        pol = read_polar(path)
-        ax_cl.plot(pol["alpha"], pol["CL"], marker="o", markersize=3, label=label)
-        ax_cm.plot(pol["alpha"], pol["CM"], marker="o", markersize=3, label=label)
+save_path = os.path.join(figures_dir, "3.1.5_polars.png")
 
-    ax_cl.set_ylabel(r"$Cl$ [-]")
-    ax_cm.set_ylabel(r"$C_{m,c/4}$ [-]")
-    for ax in (ax_cl, ax_cm):
-        ax.set_xlabel(r"$\alpha$ [deg]")
-        ax.axhline(0, color="black", linewidth=0.6)
-        ax.axvline(0, color="black", linewidth=0.6)
-        ax.grid(True, linewidth=0.4, alpha=0.6)
-        ax.legend(fontsize=9)
-    fig.suptitle(title)
-    fig.tight_layout()
+def read_polar(file_path):
+    # skip the XFOIL header, columns: alpha, CL, CD, CDp, CM, Top_Xtr, Bot_Xtr
+    data = np.loadtxt(file_path, skiprows=12)
+    return data[:, 0], data[:, 1], data[:, 4]
 
-    
-    fig.savefig(os.path.join(FIG_DIR, f"{filename}.png"), dpi=300)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 
+for i, files in enumerate(inputs):
+    file_path = os.path.join(path, files)
+    alpha, cl, cm = read_polar(file_path)
 
-if __name__ == "__main__":
-    cases = [
-        (os.path.join(INV_DIR, "pol_1611_N10_inv.txt"), "N = 10"),
-        (os.path.join(INV_DIR, "pol_1611_N50_inv.txt"), "N = 50"),
-        (os.path.join(INV_DIR, "pol_1611_N250_inv.txt"), "N = 250"),
-    ]
-    plot_cl_cm(cases, "Inviscid polars", "polar_inviscid_N")
-    plt.show()
+    ax1.plot(alpha, cl, markersize=3, color=f'C{i}', label=labels_to_use[i])
+    ax2.plot(alpha, cm, markersize=3, color=f'C{i}', label=labels_to_use[i])
+
+ax1.set_xlabel("alpha [deg]")
+ax1.set_ylabel("Cl")
+ax1.axhline(0, color='black', linewidth=0.8, linestyle='--')
+ax1.legend()
+
+ax2.set_xlabel("alpha [deg]")
+ax2.set_ylabel("Cm c/4")
+ax2.axhline(0, color='black', linewidth=0.8, linestyle='--')
+ax2.legend()
+
+plt.savefig(save_path, dpi=300, bbox_inches='tight')
+plt.show()
