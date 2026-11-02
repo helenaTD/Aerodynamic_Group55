@@ -6,12 +6,12 @@ import os
 #inputs = ["pol_1611_inv.txt", "pol_1622_inv.txt"]
 #inputs = ["pol_1611_N10_inv.txt", "pol_1611_N50_inv.txt", "pol_1611_N250_inv.txt"]
 #inputs = ["pol_1611_inv.txt", "pol_0011_inv.txt"]
-inputs = ["pol_1611_Re1.5e6.txt", "pol_1611_inv.txt", "pol_1622_inv.txt"]
+inputs = ["pol_1611_Re1.5e6.txt", "pol_1611_inv.txt"]
 
 #labels_to_use = ["NACA1611", "NACA1622"]
 #labels_to_use = ["N = 10", "N = 50", "N = 250"]
 #labels_to_use = ["NACA1611", "NACA0011"]
-labels_to_use = ["NACA 1611 Visc", "NACA 1611 Invisc", "NACA 1622 Invisc"]
+labels_to_use = ["NACA 1611 Visc", "NACA 1611 Invisc"]
 
 path_i = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Inviscid_flows")
 path_v = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Viscous_flows")
