@@ -1,0 +1,50 @@
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+
+inputs = ["1611_a0_dump.txt", "1611_a4_dump.txt"]
+
+path = r"C:\Users\david\Desktop\Uni\Aircraft Aereodynamics\Aerodynamic_Group55\Viscous_flows"
+figures_dir = r"C:\Users\david\Desktop\Uni\Aircraft Aereodynamics\Aerodynamic_Group55\figures"
+
+os.makedirs(figures_dir, exist_ok=True)
+save_path = os.path.join(figures_dir, "3.2.5.png")
+
+labels_to_use = ["AoA: 0", "AoA: 4"]
+
+
+def read_suction_side(file_path):
+  """Extracts the suction side (upper surface) from XFOIL dump data
+
+  by slicing from the start up to the leading edge (minimum x).
+  """
+  data = np.loadtxt(file_path, skiprows=1)
+  x = data[:, 1]
+  cf = data[:, 6]
+
+  # Find the leading edge index (where x is at its minimum)
+  le_index = np.argmin(x)
+
+  # The suction side is everything from the trailing edge up to the leading edge
+  x_upper = x[: le_index + 1]
+  cf_upper = cf[: le_index + 1]
+
+  # Sort by x so the plot goes smoothly from leading edge (0) to trailing edge (1)
+  sort_idx = np.argsort(x_upper)
+  return x_upper[sort_idx], cf_upper[sort_idx]
+
+
+plt.figure(figsize=(9, 6))
+
+for i, filename in enumerate(inputs):
+  file_path = os.path.join(path, filename)
+  x, cf = read_suction_side(file_path)
+  plt.plot(x, cf, label=labels_to_use[i])
+
+plt.xlabel("x/c")
+plt.ylabel("Cf")
+
+plt.legend()
+
+plt.savefig(save_path, dpi=300, bbox_inches="tight")
+plt.show()
